@@ -1,0 +1,336 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Joc amb JQuery</title>
+<meta charset="utf-8">
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous">
+</script>
+
+<style>
+*{
+	box-sizing-border-box;
+}
+h1{
+	text-align:center;
+	font-size:1.4;
+}
+#marcador{
+	float:right;
+	margin:-50px 1% 0px 0px;
+	text-align:center;
+	width:31%;
+	font-size:1.6em;
+	text-transform:uppercase;
+	font-family:verdana;
+	border:1px solid black;
+}
+#jugadorNom{
+	background:rgba(95,70,40,0.5);
+	color:gold;
+	margin:32px 0px 0px 1%;
+	width:70%;
+	height:40px;
+	padding:14px 1% 0px 1%;
+	overflow:hidden;
+	font-size:1.9vw;
+	float:left;
+	text-align:center;
+	text-transform:initial;
+}
+#resultat{
+	background:rgba(230,230,230,1);
+	margin:25px 5% 20px 1%;
+	width:15%;
+	height:52px;
+	font-size:1.6em;
+	padding:8px 0px;;
+	text-align:center;
+	outline-top:1px solid black;
+	outline-offset: 10px;
+	float:right;
+}
+#inom{
+	float:left;
+	width:200px;
+	height:35px;
+	margin-right: 20px;
+	font-size:1.6em;
+	border:1px solid skyblue;
+}
+#boto{
+	background:orange;
+	color:white;
+	text-shadow:1px 1px black;
+	float:left;
+	width:4em;
+	height:1.3em;
+	border-radius:10px;
+	text-align:center;
+	padding-top:0.1em;
+	font-size:1.7em;
+	font-family:verdana;
+	cursor:default;
+	box-shadow:inset -4px -5px 12px brown;
+}
+#boto:link {
+	background: orange;
+}
+#boto:visited {
+	background: green;
+}
+#boto:hover {
+	background: gold;
+}
+#boto:active {
+	background: yellow;
+}
+#div1{
+	position:relative;
+	width:400px;
+	height:400px;
+	border:1px solid black;
+	border-radius:14px;
+	margin:150px 0px 0px 34%;
+}
+#verm{
+	position:absolute;
+	top:0pxx;
+	left:0px;
+	background:red;
+	border-radius:14px 0px 0px 0px;
+}
+#verm:after {
+	content: "RED";
+    position: absolute;
+    top: 44%;
+    left:35%;
+}
+#verd{
+	position:absolute;
+	top:0px;
+	left:50%;
+	background:green;
+	border-radius:0px 14px 0px 0px;
+}
+#verd:after {
+	content: "GREEN";
+    position: absolute;
+    top: 44%;
+    left:20%;
+}
+#groc{
+	position:absolute;
+	top:50%;
+	left:0px;
+	background:yellow;
+	border-radius:0px 0px 0px 14px;
+}
+#groc:after{
+	content: "YELLOW";
+    position: absolute;
+    top: 44%;
+    left:15%;
+}
+#blau{
+	position:absolute;
+	top:50%;
+	left:50%;
+	background:blue;
+	border:2px blue;
+	border-radius:0px 0px 14px 0px;
+}
+#blau:after {
+	content: "BLUE";
+    position: absolute;
+    top: 44%;
+    left:25%;   
+}
+.tria{
+	text-align:center;
+	line-height:50%;
+	width:50%;
+	height:28%;
+	font-size:2.2em;
+	padding-top:22%;
+	cursor:pointer;
+	font-family:verdana;
+	opacity:0.6;
+}
+p{
+	font-family:verdana;
+	font-size:1.2em;
+}
+#scores{
+	float:left;
+	margin:-450px 0px 0px 20px;
+	
+}
+div>h2{
+	font-size:1.8em;
+	font-family:verdana;
+	border-bottom:4px dotted brown;
+}
+.prevent-click {
+	pointer-events: none;
+}
+#final{
+		width:24%;
+		height:100px;
+		float:right;
+		margin:-280px 0px ;
+		font-size:3vw;
+		font-family:verdana;
+		text-align:left;
+	}
+@media(max-width:1000px){
+	#final{
+		width:20%;
+		height:100px;
+		float:right;
+		margin:-250px 0%;
+		font-size:3vw;
+		font-family:verdana;
+		text-align:right;
+	}
+	h1{
+		font-size:12pt;
+	}
+}
+</style>
+</head>
+<body>
+
+<h1>Simon dice:</h1>
+
+<div id="marcador">marcador
+	<div id="jugadorNom"></div>
+	<div id="resultat"></div>
+</div>
+
+<div class="user">
+	<input type="text" value="" id="inom" maxlength="16">
+	<div id="boto" onclick="startGame();">START</div>
+</div>
+
+<div id="div1">
+	<div id="verm" class="tria"></div>
+	<div id="verd" class="tria"></div>
+	<div id="groc" class="tria"></div>
+	<div id="blau" class="tria"></div>
+</div>
+
+<div id="scores">
+	<h2>SCORE BOARD</h2>
+	<div id="totalScores"></div>
+</div>
+
+<div id="final"></div>
+
+<script type="text/javascript">
+
+	var numTiles = 4;
+	var colores = ['verm', 'verd', 'groc', 'blau'];//Si es creen els divs amb HTML es fa una matriu amb les ids
+	var numsAcumulats = [];
+	var miNum;
+	var indice;
+	var encerts = [];
+	var allScores = [];
+	
+	function aleatorio(){
+		return Math.floor((Math.random() * numTiles-1)+1);
+	}
+
+	function checkFinJugada(){
+		if(indice == numsAcumulats.length){
+			miNum = aleatorio();
+			numsAcumulats.push(colores[miNum]);
+			animaTiles(0);
+			indice=0;
+		}
+	}
+	
+	function startGame(){
+		var jugador = $('#inom').val();
+		numsAcumulats = [];
+		indice=0;
+		setTiles();
+		checkFinJugada();
+		$('.user').addClass('prevent-click');
+		$('#final').html("New Game!");
+		$('#jugadorNom').html(jugador);
+			$(".tria").on('click', function(){
+				if (this.id == numsAcumulats[indice]){
+					$('#final').html("");
+					$('#resultat').html(numsAcumulats.length);
+					indice++;
+					checkFinJugada();
+				}
+				else finPartida();
+			});
+	}
+	
+	function setTiles(){
+		$(".tria").on('mouseover', function(){
+			this.style.opacity=1;
+		});
+			$(".tria").on('mouseout', function(){
+			this.style.opacity=0.5;
+		});
+	}
+	
+	function animaTiles(index){
+		if(index > numsAcumulats.length)return;
+			$('#'+numsAcumulats[index])
+				.delay(400)
+				.animate({opacity:'1'},200)
+				.delay(300)
+				.animate({opacity:'0.4'},200, function(){
+					index++;
+					animaTiles(index);
+				});
+	}
+	
+	function finPartida(){
+			
+		$('.tria').attr('style', 'opacity: 0.6');	
+		$('#final').html("Game Over");
+		removeTileListeners();
+		$('span').html('Puntuación:'+numsAcumulats.length);
+		actualizaMarcador($('#inom').val(), numsAcumulats.length-1);
+		$('.user').removeClass('prevent-click');
+		$('#inom').val('');
+	}
+	
+	function removeTileListeners(){
+		$(".tria").off("mouseover");
+		$(".tria").off("mouseout");
+		$('.tria').off('click');
+	}	
+	
+	function actualizaMarcador(nombre, puntuacion) {
+		$('#totalScores').empty();
+		var jugador = [];
+		jugador.nombre= nombre;
+		jugador.puntuacion= parseInt(puntuacion);
+		
+		var i;
+		for (i = 0; i < allScores.length; i++) {
+		   if (allScores[i].puntuacion > jugador.puntuacion)
+		 		continue;
+		   else break;
+		}
+		allScores.splice(i, 0, jugador);
+		
+		$.each(allScores,function(index, jugadorX) {
+			$('#totalScores').append('<p>'+jugadorX.nombre+' '+jugadorX.puntuacion+'</p>');
+		});
+	}
+
+</script>
+
+</body>
+</html>  
